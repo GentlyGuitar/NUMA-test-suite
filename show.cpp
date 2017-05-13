@@ -2,6 +2,12 @@
 #include <cstdio>
 #include <iostream>
 
+/* definition of bitmask */
+// struct bitmask {
+// 	unsigned long size; /* number of bits in the map */
+// 	unsigned long *maskp;
+// };
+
 void show_numa_nodes() {
   int num_possible = numa_num_possible_nodes();
   printf("number of possible nodes: %d\n", num_possible);
@@ -16,8 +22,11 @@ void show_numa_nodes() {
   printf("number of cpus in the system: %d\n", num_cpus);
   printf("  - includes any cpus that are currently disabled\n");
   printf("  - derived from the cpu numbers in /sys/devices/system/cpu\n");
-  // int mask_allowed = numa_get_mems_allowed();
-  // printf("the mask of nodes from which the process is allowed to allocate memory in it's current cpuset context: %d\n", mask_allowed);
+
+  bitmask* mask_allowed = numa_get_mems_allowed();
+  printf("len: %lld", mask_allowed->size);
+  printf("allowed memory mask: %lld\n", mask_allowed->maskp);
+  printf("  - the mask of nodes from which the process is allowed to allocate memory in it's current cpuset context");
 }
 
 int main() {

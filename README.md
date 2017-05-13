@@ -32,4 +32,6 @@ Alternatively, write a simple program to call `numa_available()`, if it returns 
 
 The Linux kernel will use the INTERLEAVE policy by default on boot-up to avoid putting excessive load on a single memory node when processes require access to the operating-system structures. The system default policy is changed to NODE LOCAL when the first userspace process (init daemon) is started.
 
+*Node* is frequently used in the document, more formally, a *node* is defined as an area where all memory has the same speed as seen from a particular CPU. A node can contain multiple CPUs. Caches are ignored for this definition.
+
 A good [overview](http://queue.acm.org/detail.cfm?id=2513149)
