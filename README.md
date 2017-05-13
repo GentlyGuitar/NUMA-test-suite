@@ -20,3 +20,16 @@ To check if your machine has NUMA, do
 
 The first line shows the number of NUMA nodes in the system. It needs to be more than one node.
 
+Alternatively,
+
+'sudo ls /sys/devices/system/node/'
+
+Directory `node0` represents node 0, 'node1' for node 1, etc. If you only have `node0`, then there is only one node.
+
+Alternatively, write a simple program to call `numa_available()`, if it returns -1, all other functions in this library are undefined.
+
+## Overview
+
+The Linux kernel will use the INTERLEAVE policy by default on boot-up to avoid putting excessive load on a single memory node when processes require access to the operating-system structures. The system default policy is changed to NODE LOCAL when the first userspace process (init daemon) is started.
+
+A good [overview](http://queue.acm.org/detail.cfm?id=2513149)
