@@ -2,11 +2,16 @@
 #include <cstdio>
 #include <iostream>
 
-/* definition of bitmask */
+// bitmask (defined in numa.h)
+
 // struct bitmask {
 // 	unsigned long size; /* number of bits in the map */
 // 	unsigned long *maskp;
 // };
+
+
+// The bitmask is allocated by a call to numa_allocate_nodemask() using size numa_max_possible_node().
+// The set of nodes to record is derived from /proc/self/status, field "Mems_allowed". The user should not alter this bitmask.
 
 void show_numa_nodes() {
   int num_possible = numa_num_possible_nodes();
@@ -24,9 +29,19 @@ void show_numa_nodes() {
   printf("  - derived from the cpu numbers in /sys/devices/system/cpu\n");
 
   bitmask* mask_allowed = numa_get_mems_allowed();
-  printf("len: %lld", mask_allowed->size);
-  printf("allowed memory mask: %lld\n", mask_allowed->maskp);
-  printf("  - the mask of nodes from which the process is allowed to allocate memory in it's current cpuset context");
+  // printf("len: %lld", mask_allowed->size); // 1024
+  printf("allowed memory mask: %lu\n", *(mask_allowed->maskp));
+  printf("  - the mask of nodes from which the process is allowed to allocate memory in it's current cpuset context\n");
+
+  int node = 0;
+  long long freep = 0;
+  int G = 1024 * 1024 * 1024;
+  for (int i = 0; i < num_configured; i++) {
+    long long node_size = numa_node_size64(i, &freep);
+    printf("node %d size: %.3fG, free: %.3fG\n", i, (double)node_size/G, (double)freep/G);
+  }
+  
+  
 }
 
 int main() {

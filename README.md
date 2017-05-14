@@ -22,7 +22,7 @@ The first line shows the number of NUMA nodes in the system. It needs to be more
 
 Alternatively,
 
-'sudo ls /sys/devices/system/node/'
+`sudo ls /sys/devices/system/node/`
 
 Directory `node0` represents node 0, 'node1' for node 1, etc. If you only have `node0`, then there is only one node.
 
