@@ -16,9 +16,10 @@
 
 
 /* config */
-int cpu_node = 1;
+int cpu_node = 0;
+int mem_node = 0;
 char* char_arr;
-long long arr_size = 20 * 1024 * 1024;
+long long arr_size = 400 * 1024 * 1024;
 
 void* malloc_array(int size) {
   char_arr = (char*)malloc(size);
@@ -183,6 +184,48 @@ void bind_cpu(int node) {
   printf("bind the current task to run on node %d\n", node);
 }
 
+void bind_mem(int node) {
+  bitmask* m = new bitmask;
+  m->size = numa_num_task_nodes();
+  m->maskp = new unsigned long;
+  *m->maskp = 0;
+  *m->maskp |= 1 << node;
+  
+  numa_set_membind(m);
+
+  char_arr = (char*)numa_alloc_onnode(arr_size, 1);
+  if (char_arr == NULL) {
+    fprintf(stderr, "numa_alloc_onnode failed");
+    exit(0);
+  }
+
+  printf("bind the current task to allocate on node %d\n", node);
+
+}
+
+void bind_cpu_mem(int node) {
+  bitmask* m = new bitmask;
+  m->size = numa_num_task_nodes();
+  m->maskp = new unsigned long;
+  *m->maskp = 0;
+  *m->maskp |= 1 << node;
+  
+  numa_bind(m);
+  // numa_run_on_node_mask(m);
+  // numa_set_membind(m);
+
+  // int node_num = numa_num_task_nodes();
+  // printf("number of nodes that the calling task is allowed to use: %lu\n", node_num);
+
+  char_arr = (char*)numa_alloc_onnode(arr_size, 1);
+  if (char_arr == NULL) {
+    fprintf(stderr, "numa_alloc_onnode failed");
+    exit(0);
+  }
+
+  printf("bind the current task to run and allocate on node %d\n", node);
+}
+
 void parse_args(int argc, char** argv) {
   GetOpt parser(argc, argv);
   parser.require_arg_num(0);
@@ -190,13 +233,16 @@ void parse_args(int argc, char** argv) {
   parser.add_doc("Description: bind the process to one cpu node, and test accessing array from the local node, remote node or interleavely.\n"
                  "involved interfaces: numa_run_on_node(), numa_alloc_onnode()");
   parser.add_option("cpu-node", 'c', "specify which cpu node to run on", required_argument, &cpu_node, OptionArgType::INT);
+  parser.add_option("mem-node", 'm', "specify which mem node to allocate on", required_argument, &mem_node, OptionArgType::INT);
   parser.add_option("array-size", 's', "specify the size of the array (in Mb)", required_argument, &arr_size, OptionArgType::INT);
   parser.parse();
 }
 
 int main(int argc, char** argv) {
   parse_args(argc, argv);
+  // bind_cpu_mem(cpu_node);
   bind_cpu(cpu_node);
+  bind_mem(mem_node);
   test_malloc();
   test_remote();
   test_interleaved();

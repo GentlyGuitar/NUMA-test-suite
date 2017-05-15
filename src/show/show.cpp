@@ -35,6 +35,17 @@ void show_numa_nodes() {
   printf("allowed memory mask: %lu\n", *(mask_allowed->maskp));
   printf("  - the mask of nodes from which the process is allowed to allocate memory in it's current cpuset context\n");
 
+  int cpu_num = numa_num_task_cpus();
+  printf("number of cpus that the calling task is allowed to use: %lu\n", cpu_num);
+
+  int node_num = numa_num_task_nodes();
+  printf("number of nodes that the calling task is allowed to use: %lu\n", node_num);
+
+  printf("node of cpu:\n");
+  for (int i = 0; i < cpu_num; i++) {
+    printf("  cpu %d: %d\n", i, numa_node_of_cpu(i));
+  }
+
   int node = 0;
   long long freep = 0;
   int G = 1024 * 1024 * 1024;

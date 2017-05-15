@@ -8,12 +8,9 @@ SHARE_DIR=$(PROJECT)src/share/
 THIS_DIR=$(PROJECT)src/$(EXECUTABLE)/
 BUILD_DIR=$(PROJECT)build/
 
-
 CPP_FILES=$(wildcard $(THIS_DIR)*.cpp) # grab all the cpp files in ./
 SOURCES=$(CPP_FILES) $(SHARE_DIR)optParser.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
-
-$(info $(EXECUTABLE))
 
 all: $(SOURCES) $(EXECUTABLE)
 
