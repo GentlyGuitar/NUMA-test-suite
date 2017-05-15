@@ -40,6 +40,7 @@ class GetOpt {
 private:
   int _argc;
   char** _argv;
+  int _required_arg_num;
   std::string _doc;
   std::map<int, OptionStruct> _option_map;
   std::string _option_string;
@@ -56,4 +57,6 @@ public:
   option* option_array();
   void parse();
   void print_help();
+  void require_arg_num(int num) { _required_arg_num = num; } // the program requires at least num arguments
+  int required_arg_num() { return _required_arg_num; }
 };

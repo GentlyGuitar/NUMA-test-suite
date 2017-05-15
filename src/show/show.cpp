@@ -1,6 +1,7 @@
 #include <numa.h>
 #include <cstdio>
 #include <iostream>
+#include "../share/optParser.h"
 
 // bitmask (defined in numa.h)
 
@@ -8,6 +9,7 @@
 // 	unsigned long size; /* number of bits in the map */
 // 	unsigned long *maskp;
 // };
+
 
 
 // The bitmask is allocated by a call to numa_allocate_nodemask() using size numa_max_possible_node().
@@ -39,12 +41,20 @@ void show_numa_nodes() {
   for (int i = 0; i < num_configured; i++) {
     long long node_size = numa_node_size64(i, &freep);
     printf("node %d size: %.3fG, free: %.3fG\n", i, (double)node_size/G, (double)freep/G);
-  }
-  
-  
+  }  
 }
 
-int main() {
+void parse_args(int argc, char** argv) {
+  GetOpt parser(argc, argv);
+  parser.require_arg_num(0);
+  parser.add_doc("Usage: ./executable");
+  parser.add_doc("Description: print basic NUMA configuration in the system.\n"
+                 "involved interfaces: numa_num_configured_nodes(), etc");
+  parser.parse();
+}
+
+int main(int argc, char** argv) {
+  parse_args(argc, argv);
   show_numa_nodes();
   return 0;
 }

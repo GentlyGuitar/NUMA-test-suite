@@ -6,7 +6,7 @@
 #include <sys/time.h>
 #include <iostream>
 
-#include "optParser.h"
+#include "../share/optParser.h"
 
 /* definition of bitmask */
 // struct bitmask {
@@ -185,8 +185,10 @@ void bind_cpu(int node) {
 
 void parse_args(int argc, char** argv) {
   GetOpt parser(argc, argv);
-  parser.add_doc("Usage: ./a.out [option]");
-  parser.add_doc("Description: bind the process to one cpu node, and test accessing array from the local node, remote node or interleavely.");
+  parser.require_arg_num(0);
+  parser.add_doc("Usage: ./executable [option]");
+  parser.add_doc("Description: bind the process to one cpu node, and test accessing array from the local node, remote node or interleavely.\n"
+                 "involved interfaces: numa_run_on_node(), numa_alloc_onnode()");
   parser.add_option("cpu-node", 'c', "specify which cpu node to run on", required_argument, &cpu_node, OptionArgType::INT);
   parser.add_option("array-size", 's', "specify the size of the array (in Mb)", required_argument, &arr_size, OptionArgType::INT);
   parser.parse();

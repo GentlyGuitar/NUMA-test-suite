@@ -1,5 +1,6 @@
 #include "optParser.h"
 
+
 GetOpt::GetOpt(int argc, char** argv) {
   _argc = argc;
   _argv = argv;
@@ -83,10 +84,11 @@ void GetOpt::print_help() {
 }
 
 void GetOpt::parse() {
-  // if (_argc == 1) {
-  //   print_help();
-  //   exit(0);
-  // }
+  if (_argc-1 < required_arg_num()) {
+    print_help();
+    exit(0);
+  }
+
   
   int c;
   int option_index = 0;
