@@ -6,6 +6,8 @@
 #include <sys/time.h>
 #include <iostream>
 
+#include "optParser.h"
+
 /* definition of bitmask */
 // struct bitmask {
 // 	unsigned long size; /* number of bits in the map */
@@ -181,7 +183,17 @@ void bind_cpu(int node) {
   printf("bind the current task to run on node %d\n", node);
 }
 
-int main() {
+void parse_args(int argc, char** argv) {
+  GetOpt parser(argc, argv);
+  parser.add_doc("Usage: ./a.out [option]");
+  parser.add_doc("Description: bind the process to one cpu node, and test accessing array from the local node, remote node or interleavely.");
+  parser.add_option("cpu-node", 'c', "specify which cpu node to run on", required_argument, &cpu_node, OptionArgType::INT);
+  parser.add_option("array-size", 's', "specify the size of the array (in Mb)", required_argument, &arr_size, OptionArgType::INT);
+  parser.parse();
+}
+
+int main(int argc, char** argv) {
+  parse_args(argc, argv);
   bind_cpu(cpu_node);
   test_malloc();
   test_remote();
