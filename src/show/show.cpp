@@ -49,8 +49,11 @@ void show_numa_nodes() {
   int node_id;
   for (int i = 0; i < cpu_num; i++) {
     node_id = numa_node_of_cpu(i);
-    if (node_id != pre_id && pre_id >= 0) {
-      printf("  cpu %d-%d: %d\n", start, i-1, node_id);
+    if (node_id != pre_id) {
+      if (pre_id >= 0) {
+        printf("  cpu %d-%d: %d\n", start, i-1, pre_id);
+      }
+      
       pre_id = node_id;
       start = i;
     }
