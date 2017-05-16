@@ -40,7 +40,7 @@ A good [overview](http://queue.acm.org/detail.cfm?id=2513149)
 
 `cd make/; make all`
 
-To make a single test case, do `make move-pages`, where `move-pages` is the test case that tests *move_pages()*. Cat makefile to see all the targets.
+To make a single test case, do `make move-pages`, where `move-pages` is the test case that tests *move_pages()*. Cat the makefile to see all the targets.
 
 To run the test, do `cd ../build/; ./move-pages --help`.
 
