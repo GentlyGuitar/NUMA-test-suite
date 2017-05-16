@@ -35,3 +35,13 @@ The Linux kernel will use the INTERLEAVE policy by default on boot-up to avoid p
 *Node* is frequently used in the document, more formally, a *node* is defined as an area where all memory has the same speed as seen from a particular CPU. A node can contain multiple CPUs. Caches are ignored for this definition.
 
 A good [overview](http://queue.acm.org/detail.cfm?id=2513149)
+
+## Build & Test
+
+`cd make/; make all`
+
+To make a single test case, do `make show`, where show is the test case that prints out NUMA config info in the system.
+
+Then `cd ../build/; ./show`.
+
+## Monitor & Verify
