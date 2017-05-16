@@ -40,8 +40,11 @@ A good [overview](http://queue.acm.org/detail.cfm?id=2513149)
 
 `cd make/; make all`
 
-To make a single test case, do `make show`, where show is the test case that prints out NUMA config info in the system.
+To make a single test case, do `make move-pages`, where `move-pages` is the test case that prints out NUMA config info in the system. Cat makefile to see all the targets.
 
-Then `cd ../build/; ./show`.
+To run the test, do `cd ../build/; ./move-pages --help`.
 
 ## Monitor & Verify
+
+You may use `pcm-memory.x` from [Intel PCM](https://github.com/opcm/pcm) to verify if you are really using a NUMA node. Caveat: create enough memory bandwidth to make monitoring obvious. 
+
