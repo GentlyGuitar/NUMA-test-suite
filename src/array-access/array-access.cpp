@@ -270,12 +270,6 @@ void bind_mem(int node) {
   
   numa_set_membind(m);
 
-  char_arr = (char*)numa_alloc_onnode(arr_size, 1);
-  if (char_arr == NULL) {
-    fprintf(stderr, "numa_alloc_onnode failed");
-    exit(0);
-  }
-
   printf("bind the current task to allocate on node %d\n", node);
 
 }
@@ -293,12 +287,6 @@ void bind_cpu_mem(int node) {
 
   // int node_num = numa_num_task_nodes();
   // printf("number of nodes that the calling task is allowed to use: %lu\n", node_num);
-
-  char_arr = (char*)numa_alloc_onnode(arr_size, 1);
-  if (char_arr == NULL) {
-    fprintf(stderr, "numa_alloc_onnode failed");
-    exit(0);
-  }
 
   printf("bind the current task to run and allocate on node %d\n", node);
 }
