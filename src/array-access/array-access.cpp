@@ -19,7 +19,12 @@
 int cpu_node = 0;
 int mem_node = 0;
 char* char_arr;
-long long arr_size = 400 * 1024 * 1024;
+long long arr_size = 20 * 1024 * 1024;
+//long long arr_size = 4000 * 1024;
+float delay = 0; // seconds
+float timeout = 3;
+bool sequential_only = false;
+bool random_only = false;
 
 void* malloc_array(int size) {
   char_arr = (char*)malloc(size);
@@ -66,6 +71,10 @@ void sequential_access(int mode) {
     else if (mode == 2) {
       ++char_arr[i];
     }
+
+    if (delay > 0) {
+      usleep(delay*1000000);
+    }
   }    
   
   gettimeofday(&tv_end, NULL);
@@ -73,14 +82,21 @@ void sequential_access(int mode) {
   printf("    elapsed: %lld.%06ld\n", (long long int)tv_delta.tv_sec, (long int)tv_delta.tv_usec);
 }
 
-void random_access(int mode) {
-  printf("  random access test\n");
+
+void do_access(int pattern, int mode) {
+  const char* patterns[2] = {"sequential", "random"};
+
+  printf("  %s access test\n", patterns[pattern]);
+
+  
   struct timeval tv_start, tv_end, tv_delta;  
   gettimeofday(&tv_start, NULL);
   srand(time(NULL));
   for (long long i = 0; i < arr_size; i++) {
-    int j = rand() % arr_size;
-    char_arr[j] = 0;
+    int j = i;
+    if (pattern == 1) {
+      j = rand() % arr_size;
+    }
 
     if (mode == 0) {
       int dummy = char_arr[j];
@@ -91,10 +107,57 @@ void random_access(int mode) {
     else if (mode == 2) {
       ++char_arr[j];
     }
+
+    if (delay > 0) {
+      usleep(delay*1000000);
+    }
   }    
   
   gettimeofday(&tv_end, NULL);
   timersub(&tv_end, &tv_start, &tv_delta);
+  printf("    elapsed: %lld.%06ld\n", (long long int)tv_delta.tv_sec, (long int)tv_delta.tv_usec);
+}
+
+void loop_access(int pattern, int mode) {
+  const char* patterns[2] = {"sequential", "random"};
+
+  printf("  %s access test\n", patterns[pattern]);
+
+  
+  struct timeval tv_start, tv_end, tv_delta;  
+  gettimeofday(&tv_start, NULL);
+  srand(time(NULL));
+
+  while (1) {
+    for (long long i = 0; i < arr_size; i++) {
+      int j = i;
+      if (pattern == 1) {
+        j = rand() % arr_size;
+      }
+
+      if (mode == 0) {
+        int dummy = char_arr[j];
+      }
+      else if (mode == 1) {
+        char_arr[j] = 0;
+      }
+      else if (mode == 2) {
+        ++char_arr[j];
+      }
+
+      // if (delay > 0) {
+      //   usleep(delay*1000000);
+      // }
+    }    
+  
+    gettimeofday(&tv_end, NULL);
+    timersub(&tv_end, &tv_start, &tv_delta);
+
+    if (tv_delta.tv_sec > timeout) {
+      break;
+    }
+  }
+  
   printf("    elapsed: %lld.%06ld\n", (long long int)tv_delta.tv_sec, (long int)tv_delta.tv_usec);
 }
 
@@ -146,11 +209,25 @@ void random_access(int mode) {
   
 // }
 
+
+void test_access() {
+  if (sequential_only) {
+    loop_access(0, 2);
+  }
+  else if (random_only) {
+    loop_access(1, 2);
+  }
+  else {
+    loop_access(0, 2);
+    loop_access(1, 2);
+  }
+}
+
 void test_malloc() {
   printf("allocate by malloc\n");
   malloc_array(arr_size);
-  sequential_access(2);
-  random_access(2);
+
+  test_access();
 }
 
 void test_remote() {  
@@ -163,16 +240,16 @@ void test_remote() {
     }
     
     numa_alloc_array(arr_size, i);
-    sequential_access(2);
-    random_access(2);
+
+    test_access();
   }
 }
 
 void test_interleaved() {
   printf("allocate interleavely on all nodes\n");
   numa_alloc_array_interleaved(arr_size);
-  sequential_access(2);
-  random_access(2);
+
+  test_access();
 }
 
 void bind_cpu(int node) {
@@ -235,6 +312,10 @@ void parse_args(int argc, char** argv) {
   parser.add_option("cpu-node", 'c', "specify which cpu node to run on", required_argument, &cpu_node, OptionArgType::INT);
   parser.add_option("mem-node", 'm', "specify which mem node to allocate on", required_argument, &mem_node, OptionArgType::INT);
   parser.add_option("array-size", 's', "specify the size of the array (in Mb)", required_argument, &arr_size, OptionArgType::INT);
+  parser.add_option("delay", 'd', "specify the delay after each access", required_argument, &delay, OptionArgType::FLOAT);
+  parser.add_option("timeout", 't', "run each test at least [val] seconds", required_argument, &timeout, OptionArgType::FLOAT);
+  parser.add_option("sequential-only", 2, "only test sequential access", no_argument, &sequential_only, OptionArgType::BOOL);
+  parser.add_option("random-only", 3, "only test random access", no_argument, &random_only, OptionArgType::BOOL);
   parser.parse();
 }
 

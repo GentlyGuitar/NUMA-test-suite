@@ -16,6 +16,7 @@
 // };
 
 enum class OptionArgType {
+  BOOL,
   CHARS,
   INT,
   FLOAT

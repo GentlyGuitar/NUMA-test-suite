@@ -116,8 +116,12 @@ void GetOpt::parse() {
     }
     
     if (opt.store) {
-
       switch (opt.type) {
+      case OptionArgType::BOOL: {
+        *((bool*)opt.store) = true;
+        break;
+      }
+
       case OptionArgType::CHARS: {
         strcpy((char*)opt.store, optarg);
         break;
