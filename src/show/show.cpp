@@ -42,9 +42,21 @@ void show_numa_nodes() {
   printf("number of nodes that the calling task is allowed to use: %lu\n", node_num);
 
   printf("node of cpu:\n");
+  int range[2];
+  range[0] = 0;
+  int start = 0;
+  int pre_id = -1;
+  int node_id;
   for (int i = 0; i < cpu_num; i++) {
-    printf("  cpu %d: %d\n", i, numa_node_of_cpu(i));
+    node_id = numa_node_of_cpu(i);
+    if (node_id != pre_id && pre_id >= 0) {
+      printf("  cpu %d-%d: %d\n", start, i-1, node_id);
+      pre_id = node_id;
+      start = i;
+    }
+    //printf("  cpu %d: %d\n", i, );
   }
+  printf("  cpu %d-%d: %d\n", start, cpu_num-1, node_id);
 
   int node = 0;
   long long freep = 0;
