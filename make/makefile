@@ -1,15 +1,8 @@
-PROJECT=/home/tzhou/explore/numa/
-all: show array-access conflict move-pages
+ROOT_DIR=${CURDIR}/../
+TARGETS=show array-access conflict move-pages
 
-show:
-	make -f $(PROJECT)src/$@/makefile
+all: $(TARGETS)
 
-array-access:
-	make -f $(PROJECT)src/$@/makefile
-
-conflict:
-	make -f $(PROJECT)src/$@/makefile
-
-move-pages:
-	make -f $(PROJECT)src/$@/makefile DNAME=$@
+$(TARGETS):
+	make -f makefile_common PROJECT=$(ROOT_DIR) DNAME=$@
 
