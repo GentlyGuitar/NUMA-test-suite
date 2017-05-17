@@ -1,8 +1,8 @@
 ROOT_DIR=${CURDIR}/../
-TARGETS=show array-access conflict move-pages
+TARGETS=show array-access conflict move-pages memcpy
 
 all: $(TARGETS)
 
 $(TARGETS):
-	make -f makefile_common PROJECT=$(ROOT_DIR) DNAME=$@
+	make -f makefile.template PROJECT=$(ROOT_DIR) DNAME=$@
 

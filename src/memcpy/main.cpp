@@ -19,7 +19,7 @@
 int cpu_node = 0;
 int mem_node = 0;
 char* char_arr;
-long long arr_size = 20 * 1024 * 1024;
+long long arr_size = 100 * 1024 * 1024;
 //long long arr_size = 4000 * 1024;
 float delay = 0; // seconds
 float timeout = 0;
@@ -138,25 +138,10 @@ void loop_access(int pattern, int mode) {
 
   int cnt = 0;
   while (1) {
-    for (long long i = 0; i < arr_size; i++) {
-      int j = i;
-      if (pattern == 1) {
-        j = rand() % arr_size;
-      }
-
-      if (mode == 0) {
-        int dummy = char_arr[j];
-      }
-      else if (mode == 1) {
-        char_arr[j] = 0;
-      }
-      else if (mode == 2) {
-        ++char_arr[j];
-      }
-
-      // if (delay > 0) {
-      //   usleep(delay*1000000);
-      // }
+    int page_size = 1024 * 1024;
+    for (long long i = 0; i < arr_size/page_size-2; i++) {
+      memcpy(char_arr + page_size*(i+1), char_arr + page_size*i, page_size);
+      //memcpy(char_arr +1, char_arr, 1);
     }
     ++cnt;
     if (!set_time_limit) {
